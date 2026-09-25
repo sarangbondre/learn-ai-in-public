@@ -2,12 +2,15 @@
 # Question: when a few trucks break down, which loss keeps our ETA model honest?
 import numpy as np
 
-rng = np.random.default_rng(42)
+rng = np.random.default_rng(42) #is a random-number generator started from a fixed "seed" (42). The same seed gives the same "random" data every time, so anyone who runs it gets your exact numbers.
 km = rng.uniform(5, 100, 100)                    # feature: delivery distance (km)
 minutes = 2 * km + 30 + rng.normal(0, 5, 100)    # hidden rule: 2 min per km + 30 min loading
 minutes[:3] += 400                               # 3 breakdowns: huge outliers
 
+# lr (learning rate) sets how big each correction step is.
 def train(loss, lr=0.0002, epochs=20000):
+    # w (weight) means "minutes per km". The model should find about 2.
+    # b (bias) means "fixed minutes per trip". The model should find about 30.
     w, b = 0.0, 0.0
     for _ in range(epochs):
         err = (w * km + b) - minutes             # prediction minus truth
